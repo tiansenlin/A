@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 命名空间：包名+文件名 -->
+<mapper namespace="com.bwei.demo.mapper.YhMapper">
+<resultMap type="yh" id="ta_list">
+<id column="yid" property="yid"/>
+<result column="ypassword" property="ypassword"/>
+<result column="yphone" property="yphone"/>
+	<result column="zhuangtai" property="zhuangtai"></result>
+	<result column="ytime" property="ytime"></result>
+	<result column="pid" property="pid"></result>
+	<result column="jid" property="jid"></result>
+<association property="bumen" javaType="bumen">
+<id column="pid" property="pid"/>
+<result column="bname" property="bname"/>
+</association>
+	<association property="jiaose" javaType="jiaose">
+		<id column="jid" property="jid"/>
+		<result column="jname" property="jname"/>
+	</association>
+</resultMap>
+<select id="getlist" resultMap="ta_list" resultType="com.bwei.demo.entity.Yh">
+	select y.yid,y.yphone,y.zhuangtai,y.ytime,b.bname,j.jname from yh y,bumen b,jiaose j where y.pid=b.pid and y.jid=j.jid
+    <if test="mohu!=null">
+       and bname like concat ('%',#{mohu},'%')
+	</if>
+	limit #{page.pageRecord},#{page.pageSize}
+</select>
+<select id="count" resultType="int">
+	select count(*) from yh
+</select>
+	<insert id="add" keyProperty="yid" useGeneratedKeys="true">
+		insert into yh (yphone,zhuangtai,ytime,pid,jid) values (#{yphone},#{zhuangtai},#{ytime},#{bumen.pid},#{jiaose.jid})
+	</insert>
+	<select id="getjlist" resultType="com.bwei.demo.entity.Jiaose">
+		select * from jiaose
+	</select>
+	<select id="getblist" resultType="com.bwei.demo.entity.Bumen">
+		select * from bumen
+	</select>
+
+	<delete id="del">
+		delete from yh where yid=${yid}
+	</delete>
+</mapper> 
+  
